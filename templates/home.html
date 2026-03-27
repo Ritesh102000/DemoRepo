@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Home — Lec 5{% endblock %}
+
+{% block content %}
+<h1>Lecture 5: Bootstrap Grid & Django Decorators</h1>
+<p class="lead">This sample site demonstrates two topics:</p>
+
+<!-- ── GRID INTRO using the grid itself ─────── -->
+<div class="row g-4 mt-3">
+  <div class="col-md-6">
+    <div class="card h-100 border-primary">
+      <div class="card-body">
+        <h4 class="card-title">1. Bootstrap Grid System</h4>
+        <p>The 12-column responsive layout system. This very card sits in a
+           <code>col-md-6</code> — half the page on medium+ screens, full width on mobile.</p>
+        <a href="{% url 'grid_demo' %}" class="btn btn-primary">See Grid Examples</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card h-100 border-warning">
+      <div class="card-body">
+        <h4 class="card-title">2. Django Decorators</h4>
+        <p>Protect views with <code>@login_required</code>,
+           <code>@permission_required</code>, <code>@staff_member_required</code>,
+           <code>@user_passes_test</code>, and <code>@require_POST</code>.</p>
+        <a href="{% url 'dashboard' %}" class="btn btn-warning">Try Dashboard (login needed)</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DECORATOR CHEAT SHEET ──────────────────── -->
+<h3 class="mt-5">Decorator Quick Reference</h3>
+<div class="row g-3 mt-2">
+  <div class="col-lg-4 col-md-6">
+    <div class="card h-100">
+      <div class="card-header bg-success text-white">@login_required</div>
+      <div class="card-body">
+        <p>User <strong>must be logged in</strong>. If not, redirects to <code>LOGIN_URL</code>.</p>
+        <div class="code-block">
+          <span class="kw">from</span> django.contrib.auth.decorators <span class="kw">import</span> <span class="fn">login_required</span><br><br>
+          <span class="kw">@login_required</span><br>
+          <span class="kw">def</span> <span class="fn">dashboard</span>(request):<br>
+          &nbsp;&nbsp;<span class="kw">return</span> render(request, <span class="str">'dashboard.html'</span>)
+        </div>
+        <a href="{% url 'dashboard' %}" class="btn btn-sm btn-outline-success mt-2">Try it</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4 col-md-6">
+    <div class="card h-100">
+      <div class="card-header bg-info text-white">@user_passes_test</div>
+      <div class="card-body">
+        <p>Pass a <strong>custom function</strong> that returns True/False.</p>
+        <div class="code-block">
+          <span class="kw">def</span> <span class="fn">is_superuser</span>(user):<br>
+          &nbsp;&nbsp;<span class="kw">return</span> user.is_superuser<br><br>
+          <span class="kw">@user_passes_test</span>(is_superuser)<br>
+          <span class="kw">def</span> <span class="fn">admin_only</span>(request):<br>
+          &nbsp;&nbsp;...
+        </div>
+        <a href="{% url 'admin_only' %}" class="btn btn-sm btn-outline-info mt-2">Try it</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4 col-md-6">
+    <div class="card h-100">
+      <div class="card-header bg-danger text-white">@permission_required</div>
+      <div class="card-body">
+        <p>Checks Django's <strong>Permission model</strong>. Format: <code>'app.codename'</code>.</p>
+        <div class="code-block">
+          <span class="kw">@permission_required</span>(<span class="str">'pages.delete_article'</span>,<br>
+          &nbsp;&nbsp;raise_exception=<span class="kw">True</span>)<br>
+          <span class="kw">def</span> <span class="fn">delete_article</span>(request, pk):<br>
+          &nbsp;&nbsp;...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4 col-md-6">
+    <div class="card h-100">
+      <div class="card-header bg-secondary text-white">@staff_member_required</div>
+      <div class="card-body">
+        <p>User must have <code>is_staff=True</code>. From <code>django.contrib.admin</code>.</p>
+        <div class="code-block">
+          <span class="kw">from</span> django.contrib.admin.views.decorators \<br>
+          &nbsp;&nbsp;<span class="kw">import</span> <span class="fn">staff_member_required</span><br><br>
+          <span class="kw">@staff_member_required</span><br>
+          <span class="kw">def</span> <span class="fn">staff_panel</span>(request):<br>
+          &nbsp;&nbsp;...
+        </div>
+        <a href="{% url 'staff_panel' %}" class="btn btn-sm btn-outline-secondary mt-2">Try it</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4 col-md-6">
+    <div class="card h-100">
+      <div class="card-header bg-dark text-white">@require_POST / @require_http_methods</div>
+      <div class="card-body">
+        <p>Restricts allowed <strong>HTTP methods</strong>. Returns 405 otherwise.</p>
+        <div class="code-block">
+          <span class="kw">from</span> django.views.decorators.http \<br>
+          &nbsp;&nbsp;<span class="kw">import</span> <span class="fn">require_POST</span><br><br>
+          <span class="kw">@require_POST</span><br>
+          <span class="kw">def</span> <span class="fn">quick_publish</span>(request):<br>
+          &nbsp;&nbsp;...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4 col-md-6">
+    <div class="card h-100">
+      <div class="card-header bg-purple text-white" style="background:#7b1fa2">Stacking Decorators</div>
+      <div class="card-body">
+        <p>Combine multiple decorators. Applied <strong>bottom → up</strong>.</p>
+        <div class="code-block">
+          <span class="cmt"># 2nd: checks login</span><br>
+          <span class="kw">@login_required</span><br>
+          <span class="cmt"># 1st: checks POST</span><br>
+          <span class="kw">@require_POST</span><br>
+          <span class="kw">def</span> <span class="fn">quick_publish</span>(request):<br>
+          &nbsp;&nbsp;...
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── RECENT ARTICLES (grid layout) ──────────── -->
+{% if articles %}
+<h3 class="mt-5">Recent Articles</h3>
+<div class="row g-3 mt-1">
+  {% for article in articles %}
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5>{{ article.title }}</h5>
+        <p class="text-muted small">by {{ article.author }} &middot; {{ article.created_at|date:"d M Y" }}</p>
+        <p>{{ article.body|truncatewords:20 }}</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

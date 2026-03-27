@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Edit Article{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h2>Edit Article <span class="decorator-badge">@login_required + @require_http_methods(["GET","POST"])</span></h2>
+    <div class="alert alert-warning">
+      This view uses <strong>two stacked decorators</strong>: <code>@login_required</code> checks you're logged in,
+      and <code>@require_http_methods(["GET", "POST"])</code> blocks PUT/DELETE/PATCH requests.
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label">{{ field.label }}</label>
+        {{ field }}
+      </div>
+      {% endfor %}
+      <button class="btn btn-primary" type="submit">Save Changes</button>
+      <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

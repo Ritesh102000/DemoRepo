@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+  <h2>My Dashboard <span class="decorator-badge">@login_required</span></h2>
+  <a href="{% url 'create_article' %}" class="btn btn-primary">+ New Article</a>
+</div>
+
+<div class="alert alert-info mt-3">
+  <strong>How @login_required works:</strong> If you weren't logged in,
+  Django would have redirected you to <code>{{ request.META.HTTP_HOST }}/login/?next=/dashboard/</code>.
+  After login, the <code>?next=</code> parameter brings you back here.
+</div>
+
+<!-- Quick Publish — demonstrates @login_required + @require_POST stacking -->
+<div class="card mb-4">
+  <div class="card-header">
+    Quick Publish <span class="decorator-badge">@login_required + @require_POST</span>
+  </div>
+  <div class="card-body">
+    <form method="post" action="{% url 'quick_publish' %}" class="row g-2">
+      {% csrf_token %}
+      <div class="col-md-9">
+        <input name="title" class="form-control" placeholder="Quick article title..." required>
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-dark w-100" type="submit">Quick Publish</button>
+      </div>
+    </form>
+    <small class="text-muted">This endpoint only accepts POST. Try visiting <code>/quick-publish/</code> via GET — you'll get 405.</small>
+  </div>
+</div>
+
+<!-- My Articles (grid layout) -->
+<h4>My Articles</h4>
+{% if articles %}
+<div class="row g-3">
+  {% for article in articles %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5>{{ article.title }}</h5>
+        <p>{{ article.body|truncatewords:15 }}</p>
+        <small class="text-muted">{{ article.created_at|date:"d M Y, H:i" }}</small>
+      </div>
+      <div class="card-footer">
+        <a href="{% url 'edit_article' article.pk %}" class="btn btn-sm btn-outline-primary">
+          Edit <span class="decorator-badge">@login_required + @require_http_methods</span>
+        </a>
+        <a href="{% url 'delete_article' article.pk %}" class="btn btn-sm btn-outline-danger">
+          Delete <span class="decorator-badge">@permission_required</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-muted">No articles yet. Create your first one!</p>
+{% endif %}
+{% endblock %}

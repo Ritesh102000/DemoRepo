@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Staff Panel{% endblock %}
+
+{% block content %}
+<h2>Staff Panel <span class="decorator-badge">@staff_member_required</span></h2>
+
+<div class="alert alert-secondary">
+  <strong>@staff_member_required</strong> checks <code>user.is_active</code> AND
+  <code>user.is_staff</code>. It's from <code>django.contrib.admin.views.decorators</code>.
+  <br>If the check fails, user is redirected to the admin login page.
+</div>
+
+<h4>All Articles (Staff View)</h4>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for article in articles %}
+      <tr>
+        <td>{{ article.pk }}</td>
+        <td>{{ article.title }}</td>
+        <td>{{ article.author.username }}</td>
+        <td>{{ article.created_at|date:"d M Y, H:i" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-muted">No articles yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

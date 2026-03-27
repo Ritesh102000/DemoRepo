@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Delete Article{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card border-danger">
+      <div class="card-header bg-danger text-white">
+        Delete Article <span class="decorator-badge" style="background:#fff">@permission_required('pages.delete_article')</span>
+      </div>
+      <div class="card-body">
+        <p>Are you sure you want to delete <strong>"{{ article.title }}"</strong>?</p>
+        <div class="alert alert-info">
+          <strong>How @permission_required works:</strong> Your user must have the
+          <code>pages.delete_article</code> permission. Superusers have all permissions
+          automatically. Regular users need the permission assigned via Admin panel.
+          <br><br>
+          <code>raise_exception=True</code> shows a 403 Forbidden page instead of
+          redirecting to login.
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          <button class="btn btn-danger" type="submit">Yes, Delete</button>
+          <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
